@@ -20,7 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends AppCompatActivity{
+public class CrimePagerActivity extends AppCompatActivity
+    implements CrimeFragment.Callbacs {
 
     private static final String EXTRA_CRIME_ID =
             "com.and1ss.android.criminalintent.crime_id";
@@ -87,5 +88,10 @@ public class CrimePagerActivity extends AppCompatActivity{
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, id);
         return intent;
+    }
+
+    @Override
+    public void onCrimeUpdate(Crime crime) {
+
     }
 }

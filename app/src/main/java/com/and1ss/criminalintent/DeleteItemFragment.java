@@ -25,6 +25,7 @@ public class DeleteItemFragment extends DialogFragment {
     private static final String ARG_CRIME_ID = "CRIME_ID";
     public static final String EXTRA_DELETED = "DELETED";
     public static final String EXTRA_INDEX = "INDEX";
+    public static final String EXTRA_UUID = "UUID";
 
     private Crime mCrime;
 
@@ -108,6 +109,7 @@ public class DeleteItemFragment extends DialogFragment {
         data.putExtra(EXTRA_DELETED, deleted);
         data.putExtra(EXTRA_INDEX, index);
 
+        data.putExtra(EXTRA_UUID, mCrime.getId().toString());
         getTargetFragment()
                 .onActivityResult(getTargetRequestCode(), resultCode, data);
     }

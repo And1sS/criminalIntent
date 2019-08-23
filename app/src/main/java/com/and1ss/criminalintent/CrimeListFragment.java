@@ -1,6 +1,7 @@
 package com.and1ss.criminalintent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +45,17 @@ public class CrimeListFragment extends Fragment {
     private DividerItemDecoration mDividerItemDecoration;
 
     private boolean mShowSubtitle;
+
+    private Callbacs mCallbacs;
+
+    /**
+     * public interface for hosting activities
+     */
+    public interface Callbacs {
+        void onCrimeSelected(Crime crime);
+
+        void onCrimeDeleted(String uuidString);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,8 +114,7 @@ public class CrimeListFragment extends Fragment {
 
                         @Override
                         public boolean onSingleTapUp(MotionEvent motionEvent) {
-                            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
-                            startActivity(intent);
+                            mCallbacs.onCrimeSelected(mCrime);
                             return true;
                         }
 
@@ -114,7 +125,6 @@ public class CrimeListFragment extends Fragment {
 
                         @Override
                         public void onLongPress(MotionEvent motionEvent) {
-                            CrimeLab mCrimeLab = CrimeLab.get(getContext());
                             FragmentManager fragmentManager = getFragmentManager();
 
                             DeleteItemFragment deleteItemFragment = DeleteItemFragment.newInstance(mCrime.getId());
@@ -171,13 +181,19 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacs = (Callbacs) context;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
         updateUI();
     }
 
-    private void updateUI() {
+    public void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
@@ -206,8 +222,11 @@ public class CrimeListFragment extends Fragment {
 
             if(deleted) {
                 int index = data.getIntExtra(DeleteItemFragment.EXTRA_INDEX, -1);
+                String uuidString = data.getStringExtra(DeleteItemFragment.EXTRA_UUID);
                 mCrimeAdapter.mCrimes = CrimeLab.get(getActivity()).getCrimes();
                 mCrimeAdapter.notifyItemRemoved(index);
+
+                mCallbacs.onCrimeDeleted(uuidString);
             }
         } else if(requestCode == REQUEST_ADD) {
             boolean added = data.getBooleanExtra(AddItemFragment.EXTRA_ADDED, false);
@@ -282,5 +301,11 @@ public class CrimeListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacs = null;
     }
 }
