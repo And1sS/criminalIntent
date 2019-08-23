@@ -7,4 +7,5 @@ MVC design pattern.</br>
 Working with resourses/layouts/styles.</br>
 RecyclerView, ViewPager, Clock and Time Pickers.</br>
 SQLite database.</br>
+Creating tablet version of application.</br>
 Working with app's local file storage through FileProvider.</p></br>
